@@ -16,21 +16,28 @@ uint32_t MonoDownmixerInstructions = 0x095BFB; // patch to 90 90 90 90 90 90 90 
 uint32_t CELT_SIG_SCALE_offset_9186 = 0xEA58A8; // patch to FF FF FF 47
 uint32_t opus_encoder_create_CELT_mode_offset_9186 = 0x8B0A44; // should always be E9 03
 
-// copied these 2 good old routines from backtracer src lol
-void ExternalWrite(HANDLE Process, void* Address, void* source, uint32_t size)
+void ExternalWrite(HANDLE Process, void* Address, const char* source, uint32_t size)
 {
+	DWORD Old = 0;
+	DWORD Junk = 0;
+	VirtualProtectEx(Process, Address, 0x1000, PAGE_EXECUTE_READWRITE, &Old);
 	if (!WriteProcessMemory(Process, Address, source, size, NULL))
 	{
-		std::cout << "Write failed!" << std::endl;
+		std::cout << "Write failed! length: " << size << ", address: " << Address << ", code: " << GetLastError() << std::endl;
 	}
+	VirtualProtectEx(Process, Address, 0x1000, Old, &Junk);
 }
 
 void ExternalWrite(HANDLE Process, void* Address, uint8_t byte)
 {
+	DWORD Old = 0;
+	DWORD Junk = 0;
+	VirtualProtectEx(Process, Address, 0x1000, PAGE_EXECUTE_READWRITE, &Old);
 	if (!WriteProcessMemory(Process, Address, &byte, 1, NULL))
 	{
 		std::cout << "Write failed!" << std::endl;
 	}
+	VirtualProtectEx(Process, Address, 0x1000, Old, &Junk);
 }
 
 
@@ -38,6 +45,7 @@ void ExternalWrite(HANDLE Process, void* Address, uint8_t byte)
 // override those 2 offsets and you are uncapped without using a hook, bitrate is maxed default on celt
 int main()
 {
+	HMODULE VoiceEngine = {};
 	HANDLE Discord = {};
 	HANDLE Snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (!Snapshot || Snapshot == INVALID_HANDLE_VALUE)
@@ -90,6 +98,7 @@ int main()
 				// obviously were not sub string checking for "discord_voice" because this does not support any other version besides 9186
 				if (!strcmp(ModuleName, "discord_voice.node"))
 				{
+					VoiceEngine = Modules[i];
 					Discord = Process;
 					goto exit_from_loop;
 				}
@@ -103,10 +112,12 @@ int main()
 
 exit_from_loop:
 	// start patches
-	ExternalWrite(Discord, (void*)((uintptr_t)Discord + RegulatesStereoPropertyInstruction), 0xEB);
-	ExternalWrite(Discord, (void*)((uintptr_t)Discord + CreateAudioFrameStereoInstruction), "\x4D\x89\xC5\x90", sizeof("\x4D\x89\xC5\x90") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)Discord + AudioEncoderOpusConfigSetChannelsInstruction), 2);
-	ExternalWrite(Discord, (void*)((uintptr_t)Discord + MonoDownmixerInstructions), "\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9", sizeof("\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)Discord + CELT_SIG_SCALE_offset_9186), "\xFF\xFF\xFF\x47", sizeof("\xFF\xFF\xFF\x47") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)Discord + opus_encoder_create_CELT_mode_offset_9186), "\xE9\x03", sizeof("\xE9\x03") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + RegulatesStereoPropertyInstruction), 0xEB);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + CreateAudioFrameStereoInstruction), "\x4D\x89\xC5\x90", sizeof("\x4D\x89\xC5\x90") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfigSetChannelsInstruction), 2);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + MonoDownmixerInstructions), "\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9", sizeof("\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + CELT_SIG_SCALE_offset_9186), "\xFF\xFF\xFF\x47", sizeof("\xFF\xFF\xFF\x47") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + opus_encoder_create_CELT_mode_offset_9186), "\xE9\x03", sizeof("\xE9\x03") - 1);
+	std::cout << "Patches applied, FEC removal is not supported." << std::endl;
+	system("pause");
 }
