@@ -13,5 +13,9 @@
 
 ## Compiling
 - Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents
-- Set the project to release \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\![image](https://github.com/user-attachments/assets/4a1df9bc-46d6-4b88-a8b9-69bd38bb09da)
-- Change the programs character set to "Not Set" or "Multi-byte" and it will compile![image](https://github.com/user-attachments/assets/cb442aa5-2e08-42e5-83ae-7de702b01005)
+- Set the project to release 
+
+![image](https://github.com/user-attachments/assets/4a1df9bc-46d6-4b88-a8b9-69bd38bb09da)
+- Change the programs character set to "Not Set" or "Multi-byte" and it will compile
+
+![image](https://github.com/user-attachments/assets/cb442aa5-2e08-42e5-83ae-7de702b01005)
