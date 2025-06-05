@@ -5,7 +5,8 @@
 
 ## Usage
 - Run the tool when you launch discord and it will automatically patch your discord process
+- This tool is intended for people who want to make their discord stereo and increase base volume of discord to remove any limits of the volume (program does that by default)
 
-## Can this be made permanet
+## Can this be made permanet?
 - Yes and if you are smart you would already know that just by looking at the source code
 - No guides on doing this if ur brain work you can do it yourself
