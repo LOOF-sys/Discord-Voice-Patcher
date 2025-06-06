@@ -17,7 +17,7 @@
 - **(For file patching)** If you know windows file system with the knowledge of a peanut you would know that yes you can overlap files with fake exact copies and emulate basic functionality
 - **(For process memory)** Listing these would give oink checkers a list of targets so not doing that 
 - **(Evading Process Logs)** for this I would recommend concealing the programs logic (wink wink) inside another program that is capable of writing to other process memory (wink wink)
-- **(Dealing with PC checking tools)** Using the process logging evasion you can easily circumvent any post checks
+- **(Dealing with PC checking tools)** Using the process log evasion method you can easily circumvent any post checks
 - **(Bypassing Int16 Based dB Checkers)** Fairly simple just hardclip your sound to [the correct value] using *Fruity Limiter* or something equivalent and leave the patcher at its defaults since it only uncaps you enough to barley reach the max
 
 ## Compiling
