@@ -4,7 +4,7 @@
 - The actual patcher was made in 5 minutes however the reversing took a couple weeks
 
 ## Usage
-- Before running this tool at all, go into your discord's modules voice directory, by default its located at C:\Users\PUT YOUR WINDOWS USER HERE\AppData\Local\Discord\app-1.0.9193\modules then go into the discord_voice folder
+- Before running this tool at all, go into your discord's modules voice directory, by default its located at C:\Users\PUT YOUR WINDOWS USER HERE\AppData\Local\Discord, then go into app-x.x.xxxx\modules, then go into the discord_voice folder
 - Replace the "discord_voice" folder with the folder located inside the zip after you have extracted it, the folder should not contain a folder with the the name "discord_voice", if it does you did not follow instructions, it should contain the "discord_voice.node" file
 - Run the tool when you launch discord and it will automatically patch your discord process
 - This tool is intended for people who want to make their discord stereo and increase base volume of discord to remove any limits of the volume (program does that by default)
