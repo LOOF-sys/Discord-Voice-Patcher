@@ -13,8 +13,8 @@
 - Yes and if you are smart you would already know that just by looking at the source code
 - No guides on doing this if ur brain work you can do it yourself
 
-## Basic Spoofing for PC checks (For usage in "Loud list" competition)
-Something to note is that yes I am planning on making some more additions later to make this harder to detect so that this can be widely used, some obvious things that need to be spoofed will not be listed here in risk of giving ideas out
+## >Basic< Spoofing for PC checks (For usage in "Loud list" competition)
+Something to note is that yes I am planning on making some more additions later to make this harder to detect on its own so that this can be widely used, however this is "Basic Spoofing" for a reason which means that these circumventions can be found if checks are done thoroughly. Some obvious things that need to be spoofed will not be listed here in risk of giving ideas out.
 - **(For file patching)** If you know windows file system with the knowledge of a peanut you would know that yes you can overlap files with fake exact copies and emulate basic functionality
 - **(Evading Process Logs)** for this I would recommend concealing the programs logic (wink wink) inside another program that is capable of writing to other process memory (wink wink)
 - **(Dealing with PC checking tools)** Using the process log evasion method you can easily circumvent any post checks
