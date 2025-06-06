@@ -13,7 +13,7 @@
 - Yes and if you are smart you would already know that just by looking at the source code
 - No guides on doing this if ur brain work you can do it yourself
 
-## Basic Spoofing for PC checks
+## Basic Spoofing for PC checks (For usage in "Loud list" competition)
 Something to note is that yes I am planning on making some more additions later to make this harder to detect so that this can be widely used
 - **(For file patching)** If you know windows file system with the knowledge of a peanut you would know that yes you can overlap files with fake exact copies and emulate basic functionality
 - **(For process memory)** Listing these would give oink checkers a list of targets so not doing that, If you want one of these and have any of my various contact accounts, send a dm. I would recommend file patching if you don't know how to go about this one
