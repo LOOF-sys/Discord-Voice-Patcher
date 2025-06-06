@@ -10,8 +10,8 @@
 - This tool is intended for people who want to make their discord stereo and increase base volume of discord to remove any limits of the volume (program does that by default)
 
 ## Can this be made permanet?
-- Yes and if you are smart you would already know that just by looking at the source code
-- No guides on doing this if ur brain work you can do it yourself
+- Yes and soon I will add an auto-patcher to automatically do it for you
+- **(File signing problem)** If you are having trouble for some reason with the files not being signed, use signtool or if this is some kind of check related thing, overlap the file using windows file system tricks and emulate its expected behavior
 
 ## Compiling
 - Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents
