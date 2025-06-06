@@ -7,7 +7,7 @@
 - Before running this tool at all, go into your discord's modules voice directory, by default its located at C:\Users\PUT YOUR WINDOWS USER HERE\AppData\Local\Discord, then go into app-x.x.xxxx\modules, then go into the discord_voice-x (means number so example "discord_voice-1") folder
 - Find the folder inside the folder you are in called "discord_voice", not "discord_voice-x", it should just be called exactly "discord_voice", replace this folder with the folder located inside the zip after you have extracted it, the folder should not contain a folder with the the name "discord_voice", if it does you did not follow instructions, it should contain the "discord_voice.node" file
 - Run the tool when you launch discord and it will automatically patch your discord process
-- This tool is intended for people who want to make their discord stereo and increase base volume of discord to remove any limits of the volume (program does that by default)
+- This tool is intended for people who want to make their discord stereo and increase base volume of discord to remove any limits of the volume (program does that by default), it also removes the high pass filter and changes your audio encoder to CELT
 
 ## Can this be made permanet?
 - Yes and soon I will add an auto-patcher to automatically do it for you
