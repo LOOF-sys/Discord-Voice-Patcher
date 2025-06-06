@@ -13,9 +13,12 @@
 - Yes and if you are smart you would already know that just by looking at the source code
 - No guides on doing this if ur brain work you can do it yourself
 
-## Spoofing for PC checks
-- **(For file patching)** If you know windows file system with the knowledge of a peanut you would know that yes you can overlap files with fake exact copies and emulate basic functionality, there is also a million other ways to spoof that are even better and will never be caught so use ur brain
-- **(For process memory)** Obviously won't be disclosed here but in short if you know you know
+## Basic Spoofing for PC checks
+- **(For file patching)** If you know windows file system with the knowledge of a peanut you would know that yes you can overlap files with fake exact copies and emulate basic functionality
+- **(For process memory)** Listing these would give oink checkers a list of targets so not doing that 
+- **(Evading Process Logs)** for this I would recommend concealing the programs logic (wink wink) inside another program that is capabable of writing to other process memory (wink wink)
+- **(Dealing with PC checking tools)** Using the process logging evasion you can easily circumvent any post checks
+- **(Bypassing Int16 Based dB Checkers)** Fairly simple just hardclip your sound to [the correct value] using *Fruity Limiter* or something equivalent and leave the patcher at its defaults since it only uncaps you enough to barley reach the max
 
 ## Compiling
 - Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents
