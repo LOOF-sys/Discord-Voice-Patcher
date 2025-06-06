@@ -21,3 +21,7 @@
 - Change the programs character set to "Not Set" or "Multi-byte" and it will compile
 
 ![image](https://github.com/user-attachments/assets/cb442aa5-2e08-42e5-83ae-7de702b01005)
+
+## Based on what?
+- This projects majority reversing was based off of Aethercord which was a previous client I used to host for the usage of "Loud micing" back in early-mid 2024 for people to loud mic on a "Loud list" without being told they were using invalid discord clients (everything that was not the electron discord app), so I made a hook that integrated into discord and named it Aethercord, then made a seperate electron client called Aethercord that hosted the appplication
+- Inspiration for this project was to get rid of the need for injecting dll's and using modified discord executables to "get louder" on discord.com/listing
