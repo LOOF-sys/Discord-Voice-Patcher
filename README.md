@@ -20,6 +20,7 @@ Something to note is that yes I am planning on making some more additions later 
 - **(Evading Process Logs)** for this I would recommend concealing the programs logic (wink wink) inside another program that is capable of writing to other process memory (wink wink)
 - **(Dealing with PC checking tools)** Using the process log evasion method you can easily circumvent any post checks
 - **(Bypassing Int16 Based dB Checkers)** Fairly simple just hardclip your sound to [the correct value] using *Fruity Limiter* or something equivalent and leave the patcher at its defaults since it only uncaps you enough to barley reach the max
+- **(File sign check evasion)** Pretty easy and without giving too much information the solution is in this github, be smart and you will realize how you can easily get around this
 
 ## Compiling
 - Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents
