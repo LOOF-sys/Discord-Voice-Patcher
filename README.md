@@ -3,6 +3,9 @@
 - This tool was created by extensive analysis of discords voice node to force stereo to enable itself even though its disabled in the core without javascript access
 - The actual patcher was made in 5 minutes however the reversing took a couple weeks
 
+## Future support for dynamic offsets
+- Yes
+
 ## Usage
 - Before running this tool at all, go into your discord's modules voice directory, by default its located at C:\Users\PUT YOUR WINDOWS USER HERE\AppData\Local\Discord, then go into app-x.x.xxxx\modules, then go into the discord_voice-x (means number so example "discord_voice-1") folder
 - Find the folder inside the folder you are in called "discord_voice", not "discord_voice-x", it should just be called exactly "discord_voice", replace this folder with the folder located inside the zip after you have extracted it, the folder should not contain a folder with the the name "discord_voice", if it does you did not follow instructions, it should contain the "discord_voice.node" file
