@@ -3,9 +3,6 @@
 - This tool was created by extensive analysis of discords voice node to force stereo to enable itself even though its disabled in the core without javascript access
 - The actual patcher was made in 5 minutes however the reversing took a couple weeks
 
-## Future support for dynamic offsets
-- Yes
-
 ## Usage
 - Before running this tool at all, go into your discord's modules voice directory, by default its located at C:\Users\PUT YOUR WINDOWS USER HERE\AppData\Local\Discord, then go into app-x.x.xxxx\modules, then go into the discord_voice-x (means number so example "discord_voice-1") folder
 - Find the folder inside the folder you are in called "discord_voice", not "discord_voice-x", it should just be called exactly "discord_voice", replace this folder with the folder located inside the zip after you have extracted it, the folder should not contain a folder with the the name "discord_voice", if it does you did not follow instructions, it should contain the "discord_voice.node" file
@@ -17,6 +14,7 @@
 - No guides on doing this if ur brain work you can do it yourself
 
 ## Basic Spoofing for PC checks
+  - do note
 - **(For file patching)** If you know windows file system with the knowledge of a peanut you would know that yes you can overlap files with fake exact copies and emulate basic functionality
 - **(For process memory)** Listing these would give oink checkers a list of targets so not doing that, If you want one of these and have any of my various contact accounts, send a dm. I would recommend file patching if you don't know how to go about this one
 - **(Evading Process Logs)** for this I would recommend concealing the programs logic (wink wink) inside another program that is capable of writing to other process memory (wink wink)
