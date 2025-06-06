@@ -13,13 +13,13 @@
 - Yes and if you are smart you would already know that just by looking at the source code
 - No guides on doing this if ur brain work you can do it yourself
 
+## Spoofing for PC checks
+- **(For file patching)** If you know windows file system with the knowledge of a peanut you would know that yes you can overlap files with fake exact copies and emulate basic functionality, there is also a million other ways to spoof that are even better and will never be caught so use ur brain
+- **(For process memory)** Obviously won't be disclosed here but in short if you know you know
+
 ## Compiling
 - Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents
 - Set the project to release 
-
-## Spoofing for PC checks
-- **(For file patching)** If you know windows file system with the knowledge of a peanut you would know that yes you can overlap files with fake exact copies and emulate basic functionality, there is also a grillion other ways so use ur brain
-- **(For process memory)** Obviously won't be disclosed here but in short if you know you know
 
 ![image](https://github.com/user-attachments/assets/4a1df9bc-46d6-4b88-a8b9-69bd38bb09da)
 - Change the programs character set to "Not Set" or "Multi-byte" and it will compile
