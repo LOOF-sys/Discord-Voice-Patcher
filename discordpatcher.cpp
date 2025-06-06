@@ -12,9 +12,10 @@ uint32_t opus_encoder_create_CELT_mode_offset_9185 = 0x8A9F94; // should always 
 uint32_t CreateAudioFrameStereoInstruction = 0xAD794; // patch to the bytes 4D 89 C5 90
 uint32_t RegulatesStereoPropertyInstruction = 0x497AA6; // patch to EB
 uint32_t AudioEncoderOpusConfigSetChannelsInstruction = 0x302EA8; // patch to 02
-uint32_t MonoDownmixerInstructions = 0x095BFB; // patch to 90 90 90 90 90 90 90 90 90 E9
+uint32_t MonoDownmixerInstructions = 0x95B23; // patch to 90 90 90 90 90 90 90 90 90 E9
 uint32_t CELT_SIG_SCALE_offset_9186 = 0xEA58A8; // patch to FF FF FF 47
 uint32_t opus_encoder_create_CELT_mode_offset_9186 = 0x8B0A44; // should always be E9 03
+uint32_t HighPassFilter_Process = 0x4A5022; // patch to 48 B8 10 9E D8 CF 08 02 00 00 C3
 
 void ExternalWrite(HANDLE Process, void* Address, const char* source, uint32_t size)
 {
@@ -40,8 +41,7 @@ void ExternalWrite(HANDLE Process, void* Address, uint8_t byte)
 	VirtualProtectEx(Process, Address, 0x1000, Old, &Junk);
 }
 
-
-// known issue: FEC enabled (can be disabled in opus not doing allat)
+// known issue: i think discord's bitrate is not uncapped however CELT might automatically have it uncapped not fully sure
 // override those 2 offsets and you are uncapped without using a hook, bitrate is maxed default on celt
 int main()
 {
@@ -118,6 +118,7 @@ exit_from_loop:
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + MonoDownmixerInstructions), "\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9", sizeof("\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + CELT_SIG_SCALE_offset_9186), "\xFF\xFF\xFF\x47", sizeof("\xFF\xFF\xFF\x47") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + opus_encoder_create_CELT_mode_offset_9186), "\xE9\x03", sizeof("\xE9\x03") - 1);
-	std::cout << "Patches applied, FEC removal is not supported." << std::endl;
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + HighPassFilter_Process), "\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3", sizeof("\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3") - 1);
+	std::cout << "Patches applied." << std::endl;
 	system("pause");
 }
