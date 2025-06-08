@@ -1,7 +1,7 @@
 # Discord Voice Patcher
 - Developed by cypher at https://www.youtube.com/@cypher2226 or discord wcypher
 - This tool was created by extensive analysis of discords voice node to force stereo to enable itself even though its disabled in the core without javascript access
-- The actual patcher was made in 5 minutes however the reversing took a couple weeks
+- Report audio quality problems or crashing/loading/sound not working in Issues
 
 ## Usage
 - Before running this tool at all, go into your discord's modules voice directory, by default its located at C:\Users\PUT YOUR WINDOWS USER HERE\AppData\Local\Discord, then go into app-x.x.xxxx\modules, then go into the discord_voice-x (means number so example "discord_voice-1") folder
