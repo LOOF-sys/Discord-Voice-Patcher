@@ -1,5 +1,5 @@
 # Discord Voice Patcher
-- Developed by cypher at https://www.youtube.com/@cypher2226 or discord wcypher
+- Developed by cypher at https://www.youtube.com/@cypher2226
 - This tool was created by extensive analysis of discords voice node to force stereo to enable itself even though its disabled in the core without javascript access
 - Report audio quality problems or crashing/loading/sound not working in Issues
 
