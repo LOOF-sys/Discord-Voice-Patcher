@@ -2,7 +2,6 @@
 - Developed by cypher at https://www.youtube.com/@cypher2226
 - This tool was created by extensive analysis of discords voice node to force stereo to enable itself even though its disabled in the core without javascript access
 - Report audio quality problems or crashing/loading/sound not working in Issues
-- KNOWN ISSUE: Amplification method does not work properly and causes the sound to distort & also bitrate is capped
 
 ## Usage
 - Before running this tool at all, go into your discord's modules voice directory, by default its located at C:\Users\PUT YOUR WINDOWS USER HERE\AppData\Local\Discord, then go into app-x.x.xxxx\modules, then go into the discord_voice-x (means number so example "discord_voice-1") folder
