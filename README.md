@@ -10,7 +10,7 @@
 - Run the tool when you launch discord and it will automatically patch your discord process
 
 ## Compiling
-- Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents
+- Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents and create a new c file and name it patch.c and copy all of the patch.c text into the file
 - Set the project to release 
 
 ![image](https://github.com/user-attachments/assets/4a1df9bc-46d6-4b88-a8b9-69bd38bb09da)
