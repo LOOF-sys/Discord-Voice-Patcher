@@ -3,19 +3,23 @@
 #include <iostream>
 #include <psapi.h>
 
-// 9185
-uint32_t CELT_SIG_SCALE_offset_9185 = 0xEA0858; // offset to the global (should always be 47000000 or 32768.0f)
-uint32_t opus_encoder_create_CELT_mode_offset_9185 = 0x8A9F94; // should always be E9 03
-
-/* THIS ONLY WORKS FOR DISCORD VERSION 9186, ANY COMPETENT REVERSE ENGINEER CAN FIND THESE OFFSETS FOR ANY VERSION OF DISCORD */
-// version 9186
+/* Only works for the 1.0.9186 version of the voice node, signature scanning will be added later prob */
 uint32_t CreateAudioFrameStereoInstruction = 0xAD794; // patch to the bytes 4D 89 C5 90
-uint32_t RegulatesStereoPropertyInstruction = 0x497AA6; // patch to EB
 uint32_t AudioEncoderOpusConfigSetChannelsInstruction = 0x302EA8; // patch to 02
 uint32_t MonoDownmixerInstructions = 0x95B23; // patch to 90 90 90 90 90 90 90 90 90 E9
-uint32_t CELT_SIG_SCALE_offset_9186 = 0xEA58A8; // patch to FF FF FF 47
-uint32_t opus_encoder_create_CELT_mode_offset_9186 = 0x8B0A44; // should always be E9 03
+//uint32_t opus_encoder_create_CELT_mode_offset_9186 = 0x8B0A44; // should always be EA 03 (non functional)
 uint32_t HighPassFilter_Process = 0x4A5022; // patch to 48 B8 10 9E D8 CF 08 02 00 00 C3
+uint32_t OpusBitrate = 0x8B09A1; // patch to 48 C7 C0 FF FF FF FF 48 89 86 A0 00 00 00 90 90 90 90
+uint32_t OpusUserBitrate = 0x8B0992; // patch to FF FF
+uint32_t VoiceBitrate = 0x302EBA; // patch to 00 E8 03
+uint32_t EmulateStereoSuccess = 0x497504; // patch to BD 01 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90
+uint32_t EmulateBitrateModified = 0x497762; // patch to 48 C7 C5 00 D0 07 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 ; patching to 512000 for cosmetic purposes since kidz don't like 256000 x22 nop
+uint32_t HighpassCutoffFilter = 0x8B4370; // the bytes needed for a simple loop should not exceed 0x100 (around 35% the function length)
+uint32_t DcReject = 0x8B4550; // the bytes needed for this cannot exceed 0x1B6, so we will write 0x1B6
+uint32_t downmix_func = 0x8B0BB0; // patch to C3 to remove this routine
+
+extern "C" void dc_reject(const float* in, float* out, int* hp_mem, int len, int channels, int Fs);
+extern "C" void hp_cutoff(const float* in, int cutoff_Hz, float* out, int* hp_mem, int len, int channels, int Fs, int arch);
 
 void ExternalWrite(HANDLE Process, void* Address, const char* source, uint32_t size)
 {
@@ -41,8 +45,11 @@ void ExternalWrite(HANDLE Process, void* Address, uint8_t byte)
 	VirtualProtectEx(Process, Address, 0x1000, Old, &Junk);
 }
 
-// known issue: i think discord's bitrate is not uncapped however CELT might automatically have it uncapped not fully sure
-// override those 2 offsets and you are uncapped without using a hook, bitrate is maxed default on celt
+/* known issues for the developers who want to try and fix besides me (I will usually fix these if they exist)
+* Bitrate uncap not working yet cause prob need to relook at the assembly
+* Amplification of sound using float multiplication before some step is reached causes distortion
+* All other issues with the lag and FEC should be resolved with the removal of the 1/0 returning routine that was getting patched and causing problems
+*/
 int main()
 {
 	HMODULE VoiceEngine = {};
@@ -112,13 +119,18 @@ int main()
 
 exit_from_loop:
 	// start patches
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + RegulatesStereoPropertyInstruction), 0xEB);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + EmulateStereoSuccess), "\xBD\x01\x00\x00\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90", sizeof("\xBD\x01\x00\x00\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + CreateAudioFrameStereoInstruction), "\x4D\x89\xC5\x90", sizeof("\x4D\x89\xC5\x90") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfigSetChannelsInstruction), 2);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + MonoDownmixerInstructions), "\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9", sizeof("\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + CELT_SIG_SCALE_offset_9186), "\xFF\xFF\xFF\x47", sizeof("\xFF\xFF\xFF\x47") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + opus_encoder_create_CELT_mode_offset_9186), "\xE9\x03", sizeof("\xE9\x03") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + HighPassFilter_Process), "\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3", sizeof("\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + OpusBitrate), "\x48\xC7\xC0\xFF\xFF\xFF\xFF\x48\x89\x86\xA0\x00\x00\x00\x90\x90\x90\x90", sizeof("\x48\xC7\xC0\xFF\xFF\xFF\xFF\x48\x89\x86\xA0\x00\x00\x00\x90\x90\x90\x90") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + OpusUserBitrate), "\xFF\xFF", sizeof("\xFF\xFF") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + VoiceBitrate), "\x00\xE8\x03", sizeof("\x00\xE8\x03") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + HighpassCutoffFilter), (const char*)hp_cutoff, 0x100);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + DcReject), (const char*)dc_reject, 0x1B6);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + downmix_func), "\xC3", 1);
+	//ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + EmulateBitrateModified), "\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90") - 1);
 	std::cout << "Patches applied." << std::endl;
 	system("pause");
 }
