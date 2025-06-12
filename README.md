@@ -4,6 +4,7 @@
 - Report audio quality problems or crashing/loading/sound not working in Issues
 
 ## Usage
+- For usage in closet cheating, this method is obsolete for the new standard that is used today but this can be used for integration
 - Before running this tool at all, go into your discord's modules voice directory, by default its located at C:\Users\PUT YOUR WINDOWS USER HERE\AppData\Local\Discord, then go into app-x.x.xxxx\modules, then go into the discord_voice-x (means number so example "discord_voice-1") folder
 - Find the folder inside the folder you are in called "discord_voice", not "discord_voice-x", it should just be called exactly "discord_voice", replace this folder with the folder located inside the zip after you have extracted it, the folder should not contain a folder with the the name "discord_voice", if it does you did not follow instructions, it should contain the "discord_voice.node" file
 - Run the tool when you launch discord and it will automatically patch your discord process
