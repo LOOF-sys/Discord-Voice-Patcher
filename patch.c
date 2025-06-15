@@ -1,4 +1,3 @@
-
 void hp_cutoff(const float* in, int cutoff_Hz, float* out, int* hp_mem, int len, int channels, int Fs, int arch)
 {
     int* st = (hp_mem - 3553);
@@ -10,6 +9,10 @@ void hp_cutoff(const float* in, int cutoff_Hz, float* out, int* hp_mem, int len,
 void dc_reject(const float* in, float *out, int* hp_mem, int len, int channels, int Fs)
 {
     int* st = (hp_mem - 3553);
+
     *(int*)(st + 3557) = 1002; // CELT mode
+    //*(int*)((char*)st + 160) = -1; // bitrate
+    //*(int*)((char*)st + 164) = -1; // user bitrate
+    *(int*)((char*)st + 184) = 0; // disable dtx
     for (int i = 0; i < channels * len; i++) out[i] = (in[i] * channels);
 }
