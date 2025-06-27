@@ -1,7 +1,6 @@
-# Discord Voice Patcher (Discontinued until further notice)
+# Discord Voice Patcher
 - This tool was created by extensive analysis of discords voice node to force stereo to enable itself even though its disabled in the core without javascript access
 - Report audio quality problems or crashing/loading/sound not working in Issues
-- Known issue: Bitrate is still not uncapped
 
 ## Usage
 - For usage in closet cheating, this method is obsolete for the new standard that is used today but this can be used for integration
