@@ -15,6 +15,8 @@ uint32_t HighpassCutoffFilter = 0x8B4370; // the bytes needed for a simple loop 
 uint32_t DcReject = 0x8B4550; // the bytes needed for this cannot exceed 0x1B6, so we will write 0x1B6
 uint32_t downmix_func = 0x8B0BB0; // patch to C3 to remove this routine
 uint32_t AudioEncoderOpusConfig_IsOk = 0x30310C; // patch to 48 C7 C0 01 00 00 00 C3 (pretty sure discord modified this to prevent high bitrates from passing which is why none of my previous patches were working)
+uint32_t AudioEncoderOpusImpl_EncodeImpl_Jump = 0x4998BA; // patch to 90 E9
+uint32_t AudioEncoderOpusImpl_EncodeImpl_Shellcode = 0x499A2F; // patch to 48 c7 47 20 00 d0 07 00 E9 84 FE FF FF
 
 extern "C" void dc_reject(const float* in, float* out, int* hp_mem, int len, int channels, int Fs);
 extern "C" void hp_cutoff(const float* in, int cutoff_Hz, float* out, int* hp_mem, int len, int channels, int Fs, int arch);
@@ -127,6 +129,8 @@ exit_from_loop:
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + downmix_func), "\xC3", 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + Emulate48Khz), "\x90\x90\x90", sizeof("\x90\x90\x90") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfig_IsOk), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", sizeof("\x48\xC7\xC0\x01\x00\x00\x00\xC3") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusImpl_EncodeImpl_Jump), "\x90\xE9", 2);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusImpl_EncodeImpl_Shellcode), "\x48\xC7\x47\x20\x00\xD0\x07\x00\xE9\x84\xFE\xFF\xFF", sizeof("\x48\xC7\x47\x20\x00\xD0\x07\x00\xE9\x84\xFE\xFF\xFF") - 1);
 	std::cout << "Patches applied." << std::endl;
 	system("pause");
 }
