@@ -11,7 +11,7 @@
 - Run the tool when you launch discord and it will automatically patch your discord process
 
 ## Compiling (Do in order)
-- Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents and create a new c file and name it patch.c and copy all of the patch.c text into the file
+- Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents and create a new c file and name it patch.cpp and copy all of the patch.cpp text into the file
 - Set the project to release
 - Properties > C/C++ > Optimization set Optimization to favor size and set "Favor size or speed" to small code **(Has to be done or it will crash)**
 
