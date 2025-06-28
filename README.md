@@ -1,5 +1,5 @@
 # Discord Voice Patcher
-- This tool was created by extensive analysis of discords voice node to force stereo to enable itself even though its disabled in the core without javascript access
+- This tool was created by extensive analysis of discords voice node to force discord to be stereo, maxed bitrate, CELT mode, higher baseline volume and no FEC without javascript access for newer nodes which don't support it anymore
 - Report audio quality problems or crashing/loading/sound not working in Issues
 
 ## Usage
