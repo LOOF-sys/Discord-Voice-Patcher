@@ -9,7 +9,7 @@
 - Run the tool when you launch discord and it will automatically patch your discord process
 ### For braindead users (bonus)
 If you dont scream at ur microphone or repeat words like a robot to wait for text on a screen then skip this (ur a normal user)
-- For the intellectually disabled (packers and loud micers), this is not a hook and for the braindead terminology just called it "patched voice modules", unfortunately I cant explain what a hook is without using 5 paragraphs to a type of person who is literally lower on the iq spectrum so u will have to ask chatgpt
+- For the intellectually disabled (packers and loud micers), this is not a hook and for the braindead terminology just call it "patched voice modules", unfortunately I cant explain what a hook is to you specifically without using 5 paragraphs so u will have to ask chatgpt
 
 ## Compiling (Do in order)
 - Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents and create a new c file and name it patch.c and copy all of the patch.c text into the file
