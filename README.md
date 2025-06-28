@@ -10,8 +10,8 @@
 
 ## Compiling
 - Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents and create a new c file and name it patch.c and copy all of the patch.c text into the file
+- Set the project to release (BEFORE DOING THE STEPS NEXT)
 - Properties > C/C++ > Optimization set Optimization to favor size and set "Favor size or speed" to small code
-- Set the project to release 
 
 ![image](https://github.com/user-attachments/assets/4a1df9bc-46d6-4b88-a8b9-69bd38bb09da)
 - Change the programs character set to "Not Set" or "Multi-byte" and it will compile
