@@ -45,10 +45,6 @@ void ExternalWrite(HANDLE Process, void* Address, uint8_t byte)
 	VirtualProtectEx(Process, Address, 0x1000, Old, &Junk);
 }
 
-/* known issues for the developers who want to try and fix besides me (I will usually fix these if they exist)
-* Bitrate uncap not working yet cause prob need to relook at the assembly
-* All other issues with the lag and FEC should be resolved with the removal of the 1/0 returning routine that was getting patched and causing problems
-*/
 int main()
 {
 	HMODULE VoiceEngine = {};
