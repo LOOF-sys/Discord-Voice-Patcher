@@ -8,10 +8,10 @@
 - Find the folder inside the folder you are in called "discord_voice", not "discord_voice-x", it should just be called exactly "discord_voice", replace this folder with the folder located inside the zip after you have extracted it, the folder should not contain a folder with the the name "discord_voice", if it does you did not follow instructions, it should contain the "discord_voice.node" file
 - Run the tool when you launch discord and it will automatically patch your discord process
 
-## Compiling
+## Compiling (Do in order)
 - Go into Visual Studio and create a console application, copy all of the source in the discordpatcher.cpp file and override the default .cpp file's contents and create a new c file and name it patch.c and copy all of the patch.c text into the file
-- Set the project to release (BEFORE DOING THE STEPS NEXT)
-- Properties > C/C++ > Optimization set Optimization to favor size and set "Favor size or speed" to small code
+- Set the project to release
+- Properties > C/C++ > Optimization set Optimization to favor size and set "Favor size or speed" to small code **(Has to be done or it will crash)**
 
 ![image](https://github.com/user-attachments/assets/4a1df9bc-46d6-4b88-a8b9-69bd38bb09da)
 - Change the programs character set to "Not Set" or "Multi-byte" and it will compile
