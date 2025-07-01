@@ -1,5 +1,5 @@
 # Discord Voice Patcher
-- **Dynamic discord version support will be added next update for ease of use and more support for a variety of discord versions**
+- **Dynamic discord version support will not be supported due to register variation in each update, manual new offsets & patches will have to be created**
 - At this point this is a finished product and will not recieve anymore updates unless it is something required
 - This tool was created by extensive analysis of discords voice node to force discord to be stereo, maxed bitrate, CELT mode, higher baseline volume and no FEC without javascript access for newer nodes which don't support it anymore
 - Report audio quality problems or crashing/loading/sound not working in Issues
