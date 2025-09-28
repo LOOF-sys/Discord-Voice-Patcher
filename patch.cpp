@@ -1,5 +1,5 @@
 // modify this value
-constexpr float dB = 1.1;
+constexpr float dB = 10;
 //
 
 typedef signed char        int8_t;
