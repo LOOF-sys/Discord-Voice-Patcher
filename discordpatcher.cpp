@@ -4,6 +4,7 @@
 #include <psapi.h>
 
 #define VERSION 9219
+#define FILE_PATCHER_MODE 0
 
 #if (VERSION == 9186)
 /* Only works for the 1.0.9186 version of the voice node, signature scanning will be added later prob */
@@ -36,6 +37,7 @@ uint32_t downmix_func = 0x8D2820; // C3
 uint32_t AudioEncoderOpusConfig_IsOk = 0x3A0E00; // 48 C7 C0 01 00 00 00 C3
 uint32_t AudioEncoderOpusImpl_EncodeImpl_Jump = 0x523792;
 uint32_t AudioEncoderOpusImpl_EncodeImpl_Shellcode = 0x5239AB;
+uint32_t ThrowError = 0x2B3340;
 #endif
 
 uint8_t* SignatureScanFor(uint8_t* Address, uint64_t Range, const char* Signature, uint64_t SignatureLength);
@@ -66,6 +68,7 @@ void ExternalWrite(HANDLE Process, void* Address, uint8_t byte)
 	VirtualProtectEx(Process, Address, 0x1000, Old, &Junk);
 }
 
+int FilePatch(HANDLE Process, HMODULE Module);
 int main()
 {
 	HMODULE VoiceEngine = {};
@@ -121,6 +124,9 @@ int main()
 				// obviously were not sub string checking for "discord_voice" because this does not support any other version besides 9186
 				if (!strcmp(ModuleName, "discord_voice.node"))
 				{
+#if (FILE_PATCHER_MODE == 1)
+					return FilePatch(Process, Modules[i]);
+#endif
 					VoiceEngine = Modules[i];
 					Discord = Process;
 					goto exit_from_loop;
@@ -149,6 +155,126 @@ exit_from_loop:
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfig_IsOk), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", sizeof("\x48\xC7\xC0\x01\x00\x00\x00\xC3") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusImpl_EncodeImpl_Jump), "\x90\xE9", 2);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusImpl_EncodeImpl_Shellcode), "\x48\xC7\x47\x1C\x30\xC8\x07\x00\xE9\xE0\xFD\xFF\xFF\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\x47\x1C\x00\xD0\x07\x00\xE9\xE0\xFD\xFF\xFF\x90\x90\x90\x90\x90\x90") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + ThrowError), "\xC3", 1);
 	std::cout << "Patches applied." << std::endl;
 	system("pause");
+}
+
+void CloseAllProcesses(const char* process_name)
+{
+	HANDLE Snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (Snapshot == INVALID_HANDLE_VALUE)
+	{
+		printf("failed to create snapshot\n");
+		return;
+	}
+
+	PROCESSENTRY32 ProcessEntry = {};
+	ProcessEntry.dwSize = sizeof(ProcessEntry);
+	while (Process32Next(Snapshot, &ProcessEntry))
+	{
+		if (!strcmp(ProcessEntry.szExeFile, process_name) || strstr(ProcessEntry.szExeFile, process_name))
+		{
+			HANDLE Process = OpenProcess(PROCESS_ALL_ACCESS, false, ProcessEntry.th32ProcessID);
+			TerminateProcess(Process, 0);
+		}
+	}
+	CloseHandle(Snapshot);
+}
+
+bool ProcessOpen(const char* process_name)
+{
+	HANDLE Snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (Snapshot == INVALID_HANDLE_VALUE)
+	{
+		printf("failed to create snapshot\n");
+		return false;
+	}
+
+	PROCESSENTRY32 ProcessEntry = {};
+	ProcessEntry.dwSize = sizeof(ProcessEntry);
+	while (Process32Next(Snapshot, &ProcessEntry))
+	{
+		if (!strcmp(ProcessEntry.szExeFile, process_name) || strstr(ProcessEntry.szExeFile, process_name))
+		{
+			CloseHandle(Snapshot);
+			return true;
+		}
+	}
+
+	CloseHandle(Snapshot);
+	return false;
+}
+
+int FilePatch(HANDLE Process, HMODULE Module)
+{
+	char ModulePath[MAX_PATH] = {};
+	if (!GetModuleFileNameExA(Process, Module, ModulePath, MAX_PATH)) return 0;
+	TerminateProcess(Process, 0);
+	while (ProcessOpen("Discord.exe")) CloseAllProcesses("Discord.exe");
+
+	OFSTRUCT Useless = {};
+	auto VoiceNode = (HANDLE)OpenFile(ModulePath, &Useless, OF_READWRITE);
+	if (VoiceNode == INVALID_HANDLE_VALUE)
+	{
+		printf("failed to open discord_voice.node for readwrite\n");
+		system("pause");
+		return 0;
+	}
+
+	uint64_t FileSize = 0;
+	if (!GetFileSizeEx(VoiceNode, (PLARGE_INTEGER)&FileSize))
+	{
+		printf("failed to query information about discord_voice.node\n");
+		system("pause");
+		return 0;
+	}
+
+	void* file_data = VirtualAlloc(nullptr, FileSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	if (!file_data)
+	{
+		printf("failed to allocate file data\n");
+		system("pause");
+		return 0;
+	}
+
+	if (!ReadFile(VoiceNode, file_data, FileSize, NULL, NULL))
+	{
+		printf("failed to read discord_voice.node\n");
+		system("pause");
+		return 0;
+	}
+
+	memcpy((void*)((uintptr_t)file_data + (EmulateStereoSuccess1 - 0xC00)), "\x02", 1);
+	memcpy((void*)((uintptr_t)file_data + (EmulateStereoSuccess2 - 0xC00)), "\xEB", 1);
+	memcpy((void*)((uintptr_t)file_data + (CreateAudioFrameStereoInstruction - 0xC00)), "\x49\x89\xC5\x90", sizeof("\x49\x89\xC5\x90") - 1);
+	memcpy((void*)((uintptr_t)file_data + (AudioEncoderOpusConfigSetChannelsInstruction - 0xC00)), "\x02", 1);
+	memcpy((void*)((uintptr_t)file_data + (MonoDownmixerInstructions - 0xC00)), "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9", sizeof("\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9") - 1);
+	memcpy((void*)((uintptr_t)file_data + (EmulateBitrateModified - 0xC00)), "\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90") - 1);
+	memcpy((void*)((uintptr_t)file_data + (HighPassFilter_Process - 0xC00)), "\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3", sizeof("\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3") - 1);
+	memcpy((void*)((uintptr_t)file_data + (HighpassCutoffFilter - 0xC00)), (const char*)hp_cutoff, 0x100);
+	memcpy((void*)((uintptr_t)file_data + (DcReject - 0xC00)), (const char*)dc_reject, 0x1B6);
+	memcpy((void*)((uintptr_t)file_data + (downmix_func - 0xC00)), "\xC3", 1);
+	memcpy((void*)((uintptr_t)file_data + (Emulate48Khz - 0xC00)), "\x90\x90\x90", sizeof("\x90\x90\x90") - 1);
+	memcpy((void*)((uintptr_t)file_data + (AudioEncoderOpusConfig_IsOk - 0xC00)), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", sizeof("\x48\xC7\xC0\x01\x00\x00\x00\xC3") - 1);
+	memcpy((void*)((uintptr_t)file_data + (AudioEncoderOpusImpl_EncodeImpl_Jump - 0xC00)), "\x90\xE9", 2);
+	memcpy((void*)((uintptr_t)file_data + (AudioEncoderOpusImpl_EncodeImpl_Shellcode - 0xC00)), "\x48\xC7\x47\x1C\x30\xC8\x07\x00\xE9\xE0\xFD\xFF\xFF\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\x47\x1C\x00\xD0\x07\x00\xE9\xE0\xFD\xFF\xFF\x90\x90\x90\x90\x90\x90") - 1);
+	memcpy((void*)((uintptr_t)file_data + (ThrowError - 0xC00)), "\xC3", 1);
+
+	OVERLAPPED Overlap = {};
+	RtlZeroMemory(&Overlap, sizeof(Overlap));
+	if (!WriteFile(VoiceNode, file_data, FileSize, NULL, &Overlap))
+	{
+		printf("failed to perform write on discord_voice.node\n");
+		system("pause");
+		return 0;
+	}
+
+	CloseHandle(VoiceNode);
+	printf("successfully patched discord_voice.node\n");
+	system("pause");
+	return 0;
+
+	printf("discord_voice.node was not loaded\n");
+	return 0;
 }
