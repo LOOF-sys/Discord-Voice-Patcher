@@ -3,6 +3,9 @@
 #include <iostream>
 #include <psapi.h>
 
+#define VERSION 9219
+
+#if (VERSION == 9186)
 /* Only works for the 1.0.9186 version of the voice node, signature scanning will be added later prob */
 uint32_t CreateAudioFrameStereoInstruction = 0xAD794; // patch to the bytes 4D 89 C5 90
 uint32_t AudioEncoderOpusConfigSetChannelsInstruction = 0x302EA8; // patch to 02
@@ -11,13 +14,31 @@ uint32_t HighPassFilter_Process = 0x4A5022; // patch to 48 B8 10 9E D8 CF 08 02 
 uint32_t EmulateStereoSuccess = 0x497504; // patch to BD 01 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90
 uint32_t EmulateBitrateModified = 0x497762; // patch to 48 C7 C5 00 D0 07 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 ; patching to 512000 x22 nop
 uint32_t Emulate48Khz = 0x49761B; // patch to 90 90 90
-uint32_t HighpassCutoffFilter = 0x8B4370; // the bytes needed for a simple loop should not exceed 0x100 (around 35% the function length)
+uint32_t HighpassCutoffFilter = 0x8B4370; // the bytes needed for a simple loop should not exceed 0x100
 uint32_t DcReject = 0x8B4550; // the bytes needed for this cannot exceed 0x1B6, so we will write 0x1B6
 uint32_t downmix_func = 0x8B0BB0; // patch to C3 to remove this routine
 uint32_t AudioEncoderOpusConfig_IsOk = 0x30310C; // patch to 48 C7 C0 01 00 00 00 C3 (pretty sure discord modified this to prevent high bitrates from passing which is why none of my previous patches were working)
 uint32_t AudioEncoderOpusImpl_EncodeImpl_Jump = 0x4998BA; // patch to 90 E9
 uint32_t AudioEncoderOpusImpl_EncodeImpl_Shellcode = 0x499A2F; // patch to 48 c7 47 20 00 d0 07 00 E9 84 FE FF FF
+#else
+/* Version 1.0.9219 */
+uint32_t CreateAudioFrameStereoInstruction = 0x116C91; // 49 89 C5 90
+uint32_t AudioEncoderOpusConfigSetChannelsInstruction = 0x3A0B64; // 02
+uint32_t MonoDownmixerInstructions = 0xD6319; // 90 90 90 90 90 90 90 90 90 90 90 90 E9
+uint32_t HighPassFilter_Process = 0x52CF70; // 48 B8 10 9E D8 CF 08 02 00 00 C3
+uint32_t EmulateStereoSuccess1 = 0x520CFB; // 02
+uint32_t EmulateStereoSuccess2 = 0x520D07; // E9
+uint32_t EmulateBitrateModified = 0x52110F; // 48 C7 C5 00 D0 07 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 x39 nop
+uint32_t Emulate48Khz = 0x520E63; // 90 90 90 
+uint32_t HighpassCutoffFilter = 0x8D64B0;
+uint32_t DcReject = 0x8D6690;
+uint32_t downmix_func = 0x8D2820; // C3
+uint32_t AudioEncoderOpusConfig_IsOk = 0x3A0E00; // 48 C7 C0 01 00 00 00 C3
+uint32_t AudioEncoderOpusImpl_EncodeImpl_Jump = 0x523792;
+uint32_t AudioEncoderOpusImpl_EncodeImpl_Shellcode = 0x5239AB;
+#endif
 
+uint8_t* SignatureScanFor(uint8_t* Address, uint64_t Range, const char* Signature, uint64_t SignatureLength);
 extern "C" void dc_reject(const float* in, float* out, int* hp_mem, int len, int channels, int Fs);
 extern "C" void hp_cutoff(const float* in, int cutoff_Hz, float* out, int* hp_mem, int len, int channels, int Fs, int arch);
 
@@ -114,19 +135,20 @@ int main()
 
 exit_from_loop:
 	// start patches
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + EmulateStereoSuccess), "\xBD\x01\x00\x00\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90", sizeof("\xBD\x01\x00\x00\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + CreateAudioFrameStereoInstruction), "\x4D\x89\xC5\x90", sizeof("\x4D\x89\xC5\x90") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + EmulateStereoSuccess1), 2);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + EmulateStereoSuccess2), 0xEB);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + CreateAudioFrameStereoInstruction), "\x49\x89\xC5\x90", sizeof("\x49\x89\xC5\x90") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfigSetChannelsInstruction), 2);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + MonoDownmixerInstructions), "\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9", sizeof("\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + EmulateBitrateModified), "\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + MonoDownmixerInstructions), "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9", sizeof("\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + EmulateBitrateModified), "\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + HighPassFilter_Process), "\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3", sizeof("\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + HighpassCutoffFilter), (const char*)hp_cutoff, 0x100);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + DcReject), (const char*)dc_reject, 0x1B6);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + downmix_func), "\xC3", 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + downmix_func), 0xC3);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + Emulate48Khz), "\x90\x90\x90", sizeof("\x90\x90\x90") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfig_IsOk), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", sizeof("\x48\xC7\xC0\x01\x00\x00\x00\xC3") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusImpl_EncodeImpl_Jump), "\x90\xE9", 2);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusImpl_EncodeImpl_Shellcode), "\x48\xC7\x47\x20\x00\xD0\x07\x00\xE9\x84\xFE\xFF\xFF", sizeof("\x48\xC7\x47\x20\x00\xD0\x07\x00\xE9\x84\xFE\xFF\xFF") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusImpl_EncodeImpl_Shellcode), "\x48\xC7\x47\x1C\x30\xC8\x07\x00\xE9\xE0\xFD\xFF\xFF\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\x47\x1C\x00\xD0\x07\x00\xE9\xE0\xFD\xFF\xFF\x90\x90\x90\x90\x90\x90") - 1);
 	std::cout << "Patches applied." << std::endl;
 	system("pause");
 }
