@@ -1,5 +1,5 @@
 // modify this value
-constexpr float dB = 10;
+#define Multiplier 5
 //
 
 typedef signed char        int8_t;
@@ -48,6 +48,8 @@ __forceinline constexpr value_type noclass_get_tuple_return(uint8_t slot)
     return (value_type)(value >> (slot * (size * 8)));
 }
 
+// not used anymore
+constexpr float dB = 10;
 constexpr Tuple<uint32_t> getfraction()
 {
     for (int denominator = 1; denominator <= 10; denominator++) // if you are someone who for some reason needs a higher accuracy then 10/x, you can change these values
@@ -75,7 +77,10 @@ extern "C" void __cdecl hp_cutoff(const float* in, int cutoff_Hz, float* out, in
 {
     int* st = (hp_mem - 3553);
     *(int*)(st + 3557) = 1002; // CELT mode
-    for (unsigned long i = 0; i < channels * len; i++) out[i] = (in[i] * channels);
+    *(int*)((char*)st + 160) = -1; // bitrate
+    *(int*)((char*)st + 164) = -1; // user bitrate
+    *(int*)((char*)st + 184) = 0; // disable dtx
+    for (unsigned long i = 0; i < channels * len; i++) out[i] = in[i] * (channels + Multiplier);
 }
 
 // if you are looking for modifying the amplification, scroll up to the very top
@@ -87,5 +92,5 @@ extern "C" void __cdecl dc_reject(const float* in, float* out, int* hp_mem, int 
     *(int*)((char*)st + 160) = -1; // bitrate
     *(int*)((char*)st + 164) = -1; // user bitrate
     *(int*)((char*)st + 184) = 0; // disable dtx
-    for (int i = 0; i < channels * len; i++) out[i] = (in[i] * (channels + numerator_deviated)) / (channels + denominator_deviated);
+    for (int i = 0; i < channels * len; i++) out[i] = in[i] * (channels + Multiplier);//(in[i] * (channels + numerator_deviated)) / (channels + denominator_deviated);
 }
