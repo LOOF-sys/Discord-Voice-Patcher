@@ -1,5 +1,5 @@
 // modify this value
-#define Multiplier 5
+#define Multiplier 2
 //
 
 typedef signed char        int8_t;
