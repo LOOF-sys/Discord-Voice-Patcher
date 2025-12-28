@@ -29,14 +29,15 @@ uint32_t MonoDownmixerInstructions = 0xD6319; // 90 90 90 90 90 90 90 90 90 90 9
 uint32_t HighPassFilter_Process = 0x52CF70; // 48 B8 10 9E D8 CF 08 02 00 00 C3
 uint32_t EmulateStereoSuccess1 = 0x520CFB; // 02
 uint32_t EmulateStereoSuccess2 = 0x520D07; // E9
-uint32_t EmulateBitrateModified = 0x52110F; // 48 C7 C5 00 D0 07 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 x39 nop
+uint32_t EmulateBitrateModified = 0x52115A; // 00 EE 02
 uint32_t Emulate48Khz = 0x520E63; // 90 90 90 
 uint32_t HighpassCutoffFilter = 0x8D64B0;
 uint32_t DcReject = 0x8D6690;
 uint32_t downmix_func = 0x8D2820; // C3
 uint32_t AudioEncoderOpusConfig_IsOk = 0x3A0E00; // 48 C7 C0 01 00 00 00 C3
-uint32_t AudioEncoderOpusImpl_EncodeImpl_Jump = 0x523792;
-uint32_t AudioEncoderOpusImpl_EncodeImpl_Shellcode = 0x5239AB;
+uint32_t SetsBitrate_BitrateValue = 0x522F81; // 00 0D 07
+uint32_t SetsBitrate_BitwiseOr = 0x522F89; // 90 90 90
+uint32_t WebRtcOpus_SetBitrate_Check = 0x6A8FA5; // 00 00 
 uint32_t ThrowError = 0x2B3340;
 #endif
 
@@ -146,16 +147,16 @@ exit_from_loop:
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + CreateAudioFrameStereoInstruction), "\x49\x89\xC5\x90", sizeof("\x49\x89\xC5\x90") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfigSetChannelsInstruction), 2);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + MonoDownmixerInstructions), "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9", sizeof("\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + EmulateBitrateModified), "\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + EmulateBitrateModified), "\x00\xEE\x02", sizeof("\x00\xEE\x02") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + HighPassFilter_Process), "\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3", sizeof("\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + HighpassCutoffFilter), (const char*)hp_cutoff, 0x100);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + DcReject), (const char*)dc_reject, 0x1B6);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + downmix_func), 0xC3);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + Emulate48Khz), "\x90\x90\x90", sizeof("\x90\x90\x90") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfig_IsOk), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", sizeof("\x48\xC7\xC0\x01\x00\x00\x00\xC3") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusImpl_EncodeImpl_Jump), "\x90\xE9", 2);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusImpl_EncodeImpl_Shellcode), "\x48\xC7\x47\x1C\x30\xC8\x07\x00\xE9\xE0\xFD\xFF\xFF\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\x47\x1C\x00\xD0\x07\x00\xE9\xE0\xFD\xFF\xFF\x90\x90\x90\x90\x90\x90") - 1);
-	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + ThrowError), "\xC3", 1);
+	//ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfig_IsOk), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", sizeof("\x48\xC7\xC0\x01\x00\x00\x00\xC3") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + SetsBitrate_BitrateValue), "\x30\xC8\x07\x00\x00", sizeof("\x30\xC8\x07\x00\x00") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + SetsBitrate_BitwiseOr), "\x90\x90\x90", sizeof("\x90\x90\x90") - 1);
+	//ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + ThrowError), "\xC3", 1);
 	std::cout << "Patches applied." << std::endl;
 	system("pause");
 }
@@ -250,15 +251,15 @@ int FilePatch(HANDLE Process, HMODULE Module)
 	memcpy((void*)((uintptr_t)file_data + (CreateAudioFrameStereoInstruction - 0xC00)), "\x49\x89\xC5\x90", sizeof("\x49\x89\xC5\x90") - 1);
 	memcpy((void*)((uintptr_t)file_data + (AudioEncoderOpusConfigSetChannelsInstruction - 0xC00)), "\x02", 1);
 	memcpy((void*)((uintptr_t)file_data + (MonoDownmixerInstructions - 0xC00)), "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9", sizeof("\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\xE9") - 1);
-	memcpy((void*)((uintptr_t)file_data + (EmulateBitrateModified - 0xC00)), "\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\xC5\x00\xD0\x07\x00\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90") - 1);
+	memcpy((void*)((uintptr_t)file_data + (EmulateBitrateModified - 0xC00)), "\x00\xEE\x02", sizeof("\x00\xEE\x02") - 1);
 	memcpy((void*)((uintptr_t)file_data + (HighPassFilter_Process - 0xC00)), "\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3", sizeof("\x48\xB8\x10\x9E\xD8\xCF\x08\x02\x00\x00\xC3") - 1);
 	memcpy((void*)((uintptr_t)file_data + (HighpassCutoffFilter - 0xC00)), (const char*)hp_cutoff, 0x100);
 	memcpy((void*)((uintptr_t)file_data + (DcReject - 0xC00)), (const char*)dc_reject, 0x1B6);
 	memcpy((void*)((uintptr_t)file_data + (downmix_func - 0xC00)), "\xC3", 1);
 	memcpy((void*)((uintptr_t)file_data + (Emulate48Khz - 0xC00)), "\x90\x90\x90", sizeof("\x90\x90\x90") - 1);
 	memcpy((void*)((uintptr_t)file_data + (AudioEncoderOpusConfig_IsOk - 0xC00)), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", sizeof("\x48\xC7\xC0\x01\x00\x00\x00\xC3") - 1);
-	memcpy((void*)((uintptr_t)file_data + (AudioEncoderOpusImpl_EncodeImpl_Jump - 0xC00)), "\x90\xE9", 2);
-	memcpy((void*)((uintptr_t)file_data + (AudioEncoderOpusImpl_EncodeImpl_Shellcode - 0xC00)), "\x48\xC7\x47\x1C\x30\xC8\x07\x00\xE9\xE0\xFD\xFF\xFF\x90\x90\x90\x90\x90\x90", sizeof("\x48\xC7\x47\x1C\x00\xD0\x07\x00\xE9\xE0\xFD\xFF\xFF\x90\x90\x90\x90\x90\x90") - 1);
+	memcpy((void*)((uintptr_t)file_data + (SetsBitrate_BitrateValue - 0xC00)), "\x30\xC8\x07\x00\x00", sizeof("\x30\xC8\x07\x00\x00") - 1);
+	memcpy((void*)((uintptr_t)file_data + (SetsBitrate_BitwiseOr - 0xC00)), "\x90\x90\x90", sizeof("\x90\x90\x90") - 1);
 	memcpy((void*)((uintptr_t)file_data + (ThrowError - 0xC00)), "\xC3", 1);
 
 	OVERLAPPED Overlap = {};
