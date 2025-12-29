@@ -5,7 +5,7 @@
 - This tool was created by extensive analysis of discords voice node to force discord to be stereo, maxed bitrate, CELT mode, higher baseline volume and no FEC without javascript access for newer nodes which don't support it anymore
 - Report audio quality problems or crashing/loading/sound not working in Issues
 
-## Usage
+## Usage (Runtime)
 - Video Tutorial https://www.youtube.com/watch?v=2DuN9YEccVk
 - Make sure to download the discord_voice.zip file from this repository before continuing
 - Before running this tool at all, go into your discord's modules voice directory, by default its located at C:\Users\PUT YOUR WINDOWS USER HERE\AppData\Local\Discord, then go into app-x.x.xxxx\modules, then go into the discord_voice-x (means number so example "discord_voice-1") folder
