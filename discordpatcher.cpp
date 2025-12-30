@@ -153,10 +153,10 @@ exit_from_loop:
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + DcReject), (const char*)dc_reject, 0x1B6);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + downmix_func), 0xC3);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + Emulate48Khz), "\x90\x90\x90", sizeof("\x90\x90\x90") - 1);
-	//ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfig_IsOk), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", sizeof("\x48\xC7\xC0\x01\x00\x00\x00\xC3") - 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + AudioEncoderOpusConfig_IsOk), "\x48\xC7\xC0\x01\x00\x00\x00\xC3", sizeof("\x48\xC7\xC0\x01\x00\x00\x00\xC3") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + SetsBitrate_BitrateValue), "\x30\xC8\x07\x00\x00", sizeof("\x30\xC8\x07\x00\x00") - 1);
 	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + SetsBitrate_BitwiseOr), "\x90\x90\x90", sizeof("\x90\x90\x90") - 1);
-	//ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + ThrowError), "\xC3", 1);
+	ExternalWrite(Discord, (void*)((uintptr_t)VoiceEngine + ThrowError), "\xC3", 1);
 	std::cout << "Patches applied." << std::endl;
 	system("pause");
 }
