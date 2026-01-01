@@ -5,6 +5,9 @@
 - This tool was created by extensive analysis of discords voice node to force discord to be stereo, maxed bitrate, CELT mode, higher baseline volume and no FEC without javascript access for newer nodes which don't support it anymore
 - Report audio quality problems or crashing/loading/sound not working in Issues
 
+## Prepatched file install
+- Video Tutorial https://www.youtube.com/watch?v=0UJ0Gn4EtRo
+
 ## Usage (Runtime)
 - Video Tutorial https://www.youtube.com/watch?v=2DuN9YEccVk
 - Make sure to download the discord_voice.zip file from this repository before continuing
